@@ -1,0 +1,23 @@
+[workspace]
+resolver = "2"
+members = [
+    "kernel", "spin-lock",
+    "vga_buffer",
+    "volatile",
+    "spin-lock",
+]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[workspace.dependencies]
+bootloader = "0.9"
+volatile = { path = "volatile", version = "0.1.0" }
+vga_buffer = { path = "vga_buffer", version = "0.1.0" }
+spin-lock = { path = "spin-lock", version = "0.1.0" }

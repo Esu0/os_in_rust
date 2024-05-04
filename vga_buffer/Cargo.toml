@@ -1,0 +1,8 @@
+[package]
+name = "vga_buffer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+volatile.workspace = true
+spin-lock.workspace = true
