@@ -1,0 +1,8 @@
+[package]
+name = "serial"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+uart_16550.workspace = true
+spin-lock.workspace = true

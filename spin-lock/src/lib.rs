@@ -1,5 +1,7 @@
 #![no_std]
 
+pub mod once_lock;
+
 use core::{
     cell::UnsafeCell,
     ops::{Deref, DerefMut},
@@ -90,12 +92,4 @@ impl<T: ?Sized> Drop for SpinLockGuard<'_, T> {
     fn drop(&mut self) {
         self.locked.lock.unlock();
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {}
 }

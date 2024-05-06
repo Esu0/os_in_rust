@@ -1,9 +1,8 @@
 #![no_std]
 
-use core::ops::DerefMut;
-use core::{fmt, ops::Deref};
 use core::fmt::Write as _;
-use spin_lock::{SpinLock, SpinLockGuard};
+use core::fmt;
+use spin_lock::once_lock::OnceMutex;
 use volatile::Volatile;
 
 #[allow(dead_code)]
@@ -61,6 +60,14 @@ pub struct Writer {
 }
 
 impl Writer {
+    fn new(color_code: ColorCode) -> Self {
+        Self {
+            column_position: 0,
+            color_code,
+            buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+        }
+    }
+
     pub fn write_byte(&mut self, byte: u8) {
         match byte {
             b'\n' => self.new_line(),
@@ -122,49 +129,7 @@ impl fmt::Write for Writer {
     }
 }
 
-pub struct WriterLock(SpinLock<Option<Writer>>);
-pub struct WriterGuard<'a>(SpinLockGuard<'a, Option<Writer>>);
-
-impl Deref for WriterGuard<'_> {
-    type Target = Writer;
-
-    fn deref(&self) -> &Self::Target {
-        unsafe { self.0.as_ref().unwrap_unchecked() }
-    }
-}
-
-impl DerefMut for WriterGuard<'_> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        unsafe { self.0.as_mut().unwrap_unchecked() }
-    }
-}
-
-impl WriterLock {
-    pub const fn new() -> Self {
-        Self(SpinLock::new(None))
-    }
-
-    pub fn lock(&self) -> WriterGuard {
-        let mut lock = self.0.lock();
-        if lock.is_none() {
-            *lock = Some(Writer {
-                column_position: 0,
-                color_code: ColorCode::new(Color::Yellow, Color::Black),
-                buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-            });
-        }
-        // SAFETY: `lock` is guaranteed to be `Some` at this point.
-        WriterGuard(lock)
-    }
-}
-
-impl Default for WriterLock {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-pub static WRITER: WriterLock = WriterLock::new();
+pub static WRITER: OnceMutex<Writer> = OnceMutex::new();
 
 #[macro_export]
 macro_rules! print {
@@ -179,7 +144,10 @@ macro_rules! println {
 
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
-    WRITER.lock().write_fmt(args).unwrap();
+    WRITER
+        .lock_or_init(|| Writer::new(ColorCode::new(Color::Yellow, Color::Black)))
+        .write_fmt(args)
+        .unwrap();
 }
 
 pub fn print_something() {
