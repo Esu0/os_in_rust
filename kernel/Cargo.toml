@@ -3,6 +3,13 @@ name = "kernel"
 version = "0.1.0"
 edition = "2021"
 
+[package.metadata.bootimage]
+test-args = ["-device", "isa-debug-exit,iobase=0xf4,iosize=0x04", "-serial", "stdio", "-display", "none"]
+test-success-exit-code = 33
+test-timeout = 10
+
 [dependencies]
 vga_buffer.workspace = true
 bootloader.workspace = true
+x86_64.workspace = true
+serial.workspace = true
