@@ -13,7 +13,10 @@ pub static SERIAL1: Lazy<SerialPort, fn() -> SerialPort> = Lazy::new(|| {
 
 #[doc(hidden)]
 pub fn _print(args: ::core::fmt::Arguments) {
-    SERIAL1.lock().write_fmt(args).expect("Printing to serial failed");
+    SERIAL1
+        .lock()
+        .write_fmt(args)
+        .expect("Printing to serial failed");
 }
 
 #[macro_export]

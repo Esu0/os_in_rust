@@ -1,7 +1,7 @@
 #![no_std]
 
-use core::fmt::Write as _;
 use core::fmt;
+use core::fmt::Write as _;
 use spin_lock::once_lock::OnceMutex;
 use volatile::Volatile;
 

@@ -1,4 +1,8 @@
-use core::{cell::UnsafeCell, mem::MaybeUninit, ops::{Deref, DerefMut}};
+use core::{
+    cell::UnsafeCell,
+    mem::MaybeUninit,
+    ops::{Deref, DerefMut},
+};
 
 use crate::{SpinLock, SpinLockGuard};
 
@@ -61,8 +65,18 @@ pub struct Lazy<T, F> {
     init: UnsafeCell<MaybeUninit<F>>,
 }
 
-unsafe impl<T, F> Send for Lazy<T, F> where T: Send, F: Send {}
-unsafe impl<T, F> Sync for Lazy<T, F> where T: Send, F: Send {}
+unsafe impl<T, F> Send for Lazy<T, F>
+where
+    T: Send,
+    F: Send,
+{
+}
+unsafe impl<T, F> Sync for Lazy<T, F>
+where
+    T: Send,
+    F: Send,
+{
+}
 
 pub struct LazyGuard<'a, T>(SpinLockGuard<'a, Option<T>>);
 
