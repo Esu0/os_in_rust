@@ -32,7 +32,7 @@ version = "0.1.0"
 dependencies = [
  "bootloader",
  "serial",
- "vga_buffer",
+ "vga-buffer",
  "x86_64",
 ]
 
@@ -75,7 +75,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "vga_buffer"
+name = "vga-buffer"
 version = "0.1.0"
 dependencies = [
  "spin-lock",

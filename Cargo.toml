@@ -2,7 +2,7 @@
 resolver = "2"
 members = [
     "kernel", "spin-lock",
-    "vga_buffer",
+    "vga-buffer",
     "volatile",
     "spin-lock", "serial",
 ]
@@ -19,7 +19,7 @@ members = [
 [workspace.dependencies]
 bootloader = "0.9"
 volatile = { path = "volatile", version = "0.1.0" }
-vga_buffer = { path = "vga_buffer", version = "0.1.0" }
+vga-buffer = { path = "vga-buffer", version = "0.1.0" }
 spin-lock = { path = "spin-lock", version = "0.1.0" }
 x86_64 = "0.15.1"
 uart_16550 = "0.3.0"

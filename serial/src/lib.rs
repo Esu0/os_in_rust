@@ -1,35 +1,15 @@
 #![no_std]
 
-use core::{fmt::Write as _, ops::{Deref, DerefMut}};
+use core::fmt::Write as _;
 
-use spin_lock::once_lock::OnceMutex;
+use spin_lock::once_lock::Lazy;
 use uart_16550::SerialPort;
 
-pub struct Serial1(SerialPort);
-
-impl Default for Serial1 {
-    fn default() -> Self {
-        let mut serial_port = unsafe { SerialPort::new(0x3F8) };
-        serial_port.init();
-        Serial1(serial_port)
-    }
-}
-
-impl Deref for Serial1 {
-    type Target = SerialPort;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for Serial1 {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
-pub static SERIAL1: OnceMutex<Serial1> = OnceMutex::new();
+pub static SERIAL1: Lazy<SerialPort, fn() -> SerialPort> = Lazy::new(|| {
+    let mut serial_port = unsafe { SerialPort::new(0x3f8) };
+    serial_port.init();
+    serial_port
+});
 
 #[doc(hidden)]
 pub fn _print(args: ::core::fmt::Arguments) {
